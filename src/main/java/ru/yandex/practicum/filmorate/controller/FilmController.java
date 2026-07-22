@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -51,8 +52,10 @@ public class FilmController {
 
     private void validate(Film film) {
         if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
-            log.warn("Ошибка валидации: дата релиза должна быть раньше {}", MIN_RELEASE_DATE);
-            throw new ValidationException("Дата релиза должна быть раньше " + MIN_RELEASE_DATE);
+            log.warn("Ошибка валидации: дата релиза должна быть не раньше {}",
+                    MIN_RELEASE_DATE.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+            throw new ValidationException("Дата релиза должна быть не раньше " +
+                    MIN_RELEASE_DATE.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         }
     }
 
