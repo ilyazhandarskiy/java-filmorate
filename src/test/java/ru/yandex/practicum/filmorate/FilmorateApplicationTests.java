@@ -83,14 +83,13 @@ class FilmorateApplicationTests {
     @DisplayName("PUT /films - Проверить возврат 404 при несуществующем id")
     @Test
     void updateFilmWithIncorrectId_shouldReturnHTTP404() throws Exception {
-        String json = """
-                {
-                  "id": -1,
-                  "name": "Best",
-                  "description": "adipisicing",
-                  "releaseDate": "1967-03-25",
-                  "duration": 100
-                }""";
+        String json = "{\n" +
+                "  \"id\": 0,\n" +
+                "  \"name\": \"test\",\n" +
+                "  \"description\": \"adipisicing\",\n" +
+                "  \"releaseDate\": \"1967-03-25\",\n" +
+                "  \"duration\": 100\n" +
+                "}";
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/films"))
@@ -107,13 +106,12 @@ class FilmorateApplicationTests {
     @DisplayName("POST /films - Проверить, что название не может быть пустым")
     @Test
     void createFilmWithEmptyName_shouldReturnHTTP400() throws Exception {
-        String json = """
-                {
-                  "name": "",
-                  "description": "adipisicing",
-                  "releaseDate": "1967-03-25",
-                  "duration": 100
-                }""";
+        String json = "{\n" +
+                "  \"name\": \"\",\n" +
+                "  \"description\": \"adipisicing\",\n" +
+                "  \"releaseDate\": \"1967-03-25\",\n" +
+                "  \"duration\": 100\n" +
+                "}";
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/films"))
@@ -130,13 +128,12 @@ class FilmorateApplicationTests {
     @DisplayName("POST /films - Проверить граничные состояния: макс длина описания 200 и дата 1895-12-28 ")
     @Test
     void createFilmWithBoundaryCase_shouldReturnHTTP200() throws Exception {
-        String json = """
-                {
-                  "name": "Test",
-                  "description": "%s",
-                  "releaseDate": "1895-12-28",
-                  "duration": 1
-                }""".formatted("+".repeat(200));
+        String json = "{\n" +
+                "  \"name\": \"Test\",\n" +
+                "  \"description\": \"" + "+".repeat(200) + "\",\n" +
+                "  \"releaseDate\": \"1895-12-28\",\n" +
+                "  \"duration\": 1\n" +
+                "}";
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/films"))
@@ -153,13 +150,12 @@ class FilmorateApplicationTests {
     @DisplayName("POST /films - Проверить, что макс длина описания 201")
     @Test
     void createFilmWithDesc201_shouldReturnHTTP400() throws Exception {
-        String json = """
-                {
-                  "name": "Test",
-                  "description": "%s",
-                  "releaseDate": "1967-03-25",
-                  "duration": 100
-                }""".formatted("+".repeat(201));
+        String json = "{\n" +
+                "  \"name\": \"Test\",\n" +
+                "  \"description\": \"" + "+".repeat(201) + "\",\n" +
+                "  \"releaseDate\": \"1967-03-25\",\n" +
+                "  \"duration\": 100\n" +
+                "}";
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/films"))
@@ -176,13 +172,12 @@ class FilmorateApplicationTests {
     @DisplayName("POST /films - Проверить, что релиз фильма не раньше 28 декабря 1895 года")
     @Test
     void createFilmWithIncorrectReleaseDate_shouldReturnHTTP400() throws Exception {
-        String json = """
-                {
-                  "name": "Test",
-                  "description": "Test",
-                  "releaseDate": "1895-12-27",
-                  "duration": 100
-                }""";
+        String json = "{\n" +
+                "  \"name\": \"Test\",\n" +
+                "  \"description\": \"Test\",\n" +
+                "  \"releaseDate\": \"1895-12-27\",\n" +
+                "  \"duration\": 100\n" +
+                "}";
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/films"))
@@ -199,13 +194,12 @@ class FilmorateApplicationTests {
     @DisplayName("POST /films  - Проверить, что продолжительность фильма должна быть положительной")
     @Test
     void createFilmWithIncorrectDuration_shouldReturnHTTP400() throws Exception {
-        String json = """
-                {
-                  "name": "Test",
-                  "description": "Test",
-                  "releaseDate": "1967-03-25",
-                  "duration": 0
-                }""";
+        String json = "{\n" +
+                "  \"name\": \"Test\",\n" +
+                "  \"description\": \"Test\",\n" +
+                "  \"releaseDate\": \"1967-03-25\",\n" +
+                "  \"duration\": 0 \n" +
+                "}";
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/films"))
@@ -239,13 +233,12 @@ class FilmorateApplicationTests {
     @Test
     void createUserWithIncorrectEmail_shouldReturnHTTP400() throws Exception {
         // Проверка при пустом имейле
-        String json = """
-                {
-                  "login": "dolore",
-                  "name": "Nick Name",
-                  "email": "",
-                  "birthday": "1946-08-20"
-                }""";
+        String json = "{\n" +
+                "  \"login\": \"dolore\",\n" +
+                "  \"name\": \"Nick Name\",\n" +
+                "  \"email\": \"\",\n" +
+                "  \"birthday\": \"1946-08-20\"\n" +
+                "}";
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/users"))
@@ -259,13 +252,12 @@ class FilmorateApplicationTests {
         assertEquals(400, resp.statusCode());
 
         // Проверка при некорректном имейле
-        json = """
-                {
-                  "login": "dolore",
-                  "name": "Nick Name",
-                  "email": "mail.ru",
-                  "birthday": "1946-08-20"
-                }""";
+        json = "{\n" +
+                "  \"login\": \"dolore\",\n" +
+                "  \"name\": \"Nick Name\",\n" +
+                "  \"email\": \"mail.ru\",\n" +
+                "  \"birthday\": \"1946-08-20\"\n" +
+                "}";
 
         req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/users"))
@@ -273,8 +265,7 @@ class FilmorateApplicationTests {
                 .POST(HttpRequest.BodyPublishers.ofString(json, StandardCharsets.UTF_8))
                 .build();
 
-        resp =
-                client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        resp = client.send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
         assertEquals(400, resp.statusCode());
     }
@@ -283,13 +274,12 @@ class FilmorateApplicationTests {
     @Test
     void createUserWithIncorrectLogin_shouldReturnHTTP400() throws Exception {
         // Проверка на пустой логин
-        String json = """
-                {
-                  "login": "",
-                  "name": "Nick Name",
-                  "email": "test@test.ru",
-                  "birthday": "1946-08-20"
-                }""";
+        String json = "{\n" +
+                "  \"login\": \"\",\n" +
+                "  \"name\": \"Nick Name\",\n" +
+                "  \"email\": \"test@test.ru\",\n" +
+                "  \"birthday\": \"1946-08-20\"\n" +
+                "}";
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/users"))
@@ -303,13 +293,12 @@ class FilmorateApplicationTests {
         assertEquals(400, resp.statusCode());
 
         // Проверка на наличие пробелов
-        json = """
-                {
-                  "login": "dolore red",
-                  "name": "Nick Name",
-                  "email": "test@mail.ru",
-                  "birthday": "1946-08-20"
-                }""";
+        json = "{\n" +
+                "  \"login\": \"dolore red\",\n" +
+                "  \"name\": \"Nick Name\",\n" +
+                "  \"email\": \"test@mail.ru\",\n" +
+                "  \"birthday\": \"1946-08-20\"\n" +
+                "}";
 
         req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/users"))
@@ -328,14 +317,13 @@ class FilmorateApplicationTests {
             "birthday = LocalDate.now().Now")
     @Test
     void createUserWithBoundaryCase_shouldReturnHTTP200() throws Exception {
-        String json = """
-                {
-                  "login": "dolore",
-                  "name": "",
-                  "email": "test@test.ru",
-                  "birthday": "%s"
-                }""".formatted(LocalDate.now());
+        String json = "{\n" +
 
+                "  \"login\": \"dolore\",\n" +
+                "  \"name\": \"\",\n" +
+                "  \"email\": \"test@test.ru\",\n" +
+                "  \"birthday\": \"" + LocalDate.now() + "\"\n" +
+                "}";
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/users"))
                 .header("Content-Type", "application/json; charset=utf-8")
@@ -356,14 +344,12 @@ class FilmorateApplicationTests {
     @DisplayName("POST /users - День рождения не может быть в будущем")
     @Test
     void createUserWithIncorrectBirthday_shouldReturnHTTP400() throws Exception {
-        String json = """
-                {
-                  "login": "dolore",
-                  "name": "Nick Name",
-                  "email": "test@mail.ru",
-                  "birthday": "2946-08-20"
-                }""";
-
+        String json = "{\n" +
+                "  \"login\": \"dolore\",\n" +
+                "  \"name\": \"Nick Name\",\n" +
+                "  \"email\": \"test@mail.ru\",\n" +
+                "  \"birthday\": \"2946-08-20\"\n" +
+                "}";
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/users"))
                 .header("Content-Type", "application/json; charset=utf-8")
@@ -379,14 +365,13 @@ class FilmorateApplicationTests {
     @DisplayName("PUT /users - Проверить возврат 404 при несуществующем id")
     @Test
     void updateUserWithIncorrectId_shouldReturnHTTP404() throws Exception {
-        String json = """
-                {
-                  "id": -1,
-                  "login": "test",
-                  "name": "Nick Name",
-                  "email": "test@test.ru",
-                  "birthday": "1946-08-20"
-                }""";
+        String json = "{\n" +
+                "  \"id\": 0,\n" +
+                "  \"login\": \"dolore\",\n" +
+                "  \"name\": \"Nick Name\",\n" +
+                "  \"email\": \"test@mail.ru\",\n" +
+                "  \"birthday\": \"1946-08-20\"\n" +
+                "}";
 
         HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/users"))
