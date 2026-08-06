@@ -10,15 +10,12 @@ import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class FilmService {
-    // Добавление и удаление лайка, вывод 10 наиболее популярных фильмов по количеству лайков.
-    // Пока пусть каждый пользователь может поставить лайк фильму только один раз.
     private static final LocalDate MIN_RELEASE_DATE = LocalDate.of(1895, 12, 28);
 
     private final FilmStorage filmStorage;
@@ -67,8 +64,11 @@ public class FilmService {
 
     public Collection<Film> getFilmsByPopular(int count) {
         log.info("Запрос списка популярных фильмов в количестве count: {}", count);
+        if (count <= 0) {
+            throw new ValidationException("Значение count должно быть положительным числом");
+        }
         return filmStorage.getAllFilms().stream()
-                .sorted(Comparator.reverseOrder())
+                .sorted((f1, f2) -> Long.compare(f2.getLikes().size(), f1.getLikes().size()))
                 .limit(count)
                 .collect(Collectors.toList());
     }
@@ -76,8 +76,6 @@ public class FilmService {
 
     private void validate(Film film) {
         if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(MIN_RELEASE_DATE)) {
-            log.warn("Ошибка валидации: дата релиза должна быть не раньше {}",
-                    MIN_RELEASE_DATE.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
             throw new ValidationException("Дата релиза должна быть не раньше " +
                     MIN_RELEASE_DATE.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         }

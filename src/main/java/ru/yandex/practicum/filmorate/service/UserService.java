@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -16,9 +17,6 @@ import java.util.stream.Collectors;
 
 public class UserService {
     private final UserStorage userStorage;
-    //добавление в друзья, удаление из друзей, вывод списка общих друзей.
-    // Пока пользователям не надо одобрять заявки в друзья — добавляем сразу.
-    // То есть если Лена стала другом Саши, то это значит, что Саша теперь друг Лены.
 
     public Collection<User> getAllUsers() {
         log.info("Запрос списка пользователей");
@@ -58,25 +56,15 @@ public class UserService {
         User friend = userStorage.getUserById(friendId);
 
         user.getFriends().add(friendId);
-        userStorage.updateUser(user);
-
         friend.getFriends().add(userId);
-        userStorage.updateUser(friend);
     }
 
     public void deleteFromFriends(Long userId, Long friendId) {
         if (userId.equals(friendId)) {
             throw new ValidationException("Идентификаторы пользователей не должны совпадать");
         }
-
-        User user = userStorage.getUserById(userId);
-        User friend = userStorage.getUserById(friendId);
-
-        user.getFriends().remove(friendId);
-        userStorage.updateUser(user);
-
-        friend.getFriends().remove(userId);
-        userStorage.updateUser(friend);
+        userStorage.getUserById(userId).getFriends().remove(friendId);
+        userStorage.getUserById(friendId).getFriends().remove(userId);
     }
 
     public Collection<User> getFriendsByUserId(Long userId) {
@@ -86,8 +74,10 @@ public class UserService {
     }
 
     public Collection<User> getCommonFriends(Long userId, Long friendId) {
-        return userStorage.getUserById(userId).getFriends().stream()
-                .filter(id -> !id.equals(friendId))
+        Set<Long> currentUserFriends = userStorage.getUserById(userId).getFriends();
+        Set<Long> otherUserFriends = userStorage.getUserById(friendId).getFriends();
+        return currentUserFriends.stream()
+                .filter(otherUserFriends::contains)
                 .map(userStorage::getUserById)
                 .collect(Collectors.toList());
     }

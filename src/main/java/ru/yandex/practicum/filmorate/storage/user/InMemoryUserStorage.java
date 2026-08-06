@@ -43,7 +43,6 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public void deleteUser(Long id) {
         checkIdExistence(id);
-        //удаляем из друзей у всех пользователей
         users.values().stream()
                 .map(User::getFriends)
                 .forEach(set -> set.remove(id));

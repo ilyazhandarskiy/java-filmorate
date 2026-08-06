@@ -11,23 +11,19 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-public class Film implements Comparable<Film> {
-    Long id;
+public class Film {
+    private Long id;
 
     @NotNull(message = "Название не указано")
     @NotBlank(message = "Название не может быть пустым")
-    String name;
+    private String name;
 
     @Size(max = 200, message = "Описание не должно превышать 200 символов")
-    String description;
-    LocalDate releaseDate;
+    private String description;
+    private LocalDate releaseDate;
 
     @Min(value = 1, message = "Продолжительность фильма не может быть отрицательным")
-    int duration;
-    Set<Long> likes = new HashSet<>();
+    private int duration;
 
-    @Override
-    public int compareTo(Film o) {
-        return Long.compare(this.likes.size(), o.likes.size());
-    }
+    private final Set<Long> likes = new HashSet<>();
 }

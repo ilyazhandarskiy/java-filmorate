@@ -14,7 +14,6 @@ import java.util.Collection;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-
 @RequestMapping("/films")
 public class FilmController {
 
@@ -57,12 +56,12 @@ public class FilmController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Film createFilm(@Valid @RequestBody Film film) {
+    public Film createFilm(@RequestBody @Valid Film film) {
         return filmService.createFilm(film);
     }
 
     @PutMapping
-    public Film updateFilm(@Valid @RequestBody Film film) {
+    public Film updateFilm(@RequestBody @Valid Film film) {
         return filmService.updateFilm(film);
     }
 }
