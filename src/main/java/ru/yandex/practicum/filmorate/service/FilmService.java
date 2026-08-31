@@ -3,7 +3,10 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
+import ru.yandex.practicum.filmorate.dto.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
@@ -20,34 +23,38 @@ public class FilmService {
 
     private final FilmStorage filmStorage;
     private final UserService userService;
+    private final FilmMapper filmMapper;
 
-    public Collection<Film> getAllFilms() {
+    public Collection<FilmDto> getAllFilms() {
         log.info("Запрос списка всех фильмов");
-        return filmStorage.getAllFilms();
+        return filmStorage.getAllFilms().stream().map(filmMapper::toDto).collect(Collectors.toList());
     }
 
-    public Film getFilmById(Long id) {
-        return filmStorage.getFilmById(id);
+    public FilmDto getFilmById(Long id) {
+        return filmMapper.toDto(filmStorage.getFilmById(id));
     }
 
     public void deleteFilm(Long id) {
         filmStorage.deleteFilm(id);
     }
 
-    public Film createFilm(Film film) {
-        log.info("Добавление фильма: {}", film);
+    public FilmDto createFilm(FilmDto filmDto) {
+        log.info("Добавление фильма: {}", filmDto);
+        Film film = filmMapper.toEntity(filmDto);
         validate(film);
         Film newFilm = filmStorage.createFilm(film);
         log.info("Фильм с id: {} добавлен", newFilm.getId());
-        return newFilm;
+        return filmMapper.toDto(newFilm);
     }
 
-    public Film updateFilm(Film film) {
-        log.info("Обновление фильма: {}", film);
+    public FilmDto updateFilm(UpdateFilmRequest updateFilmRequest) {
+        log.info("Обновление фильма: {}", updateFilmRequest);
+        Film film = filmStorage.getFilmById(updateFilmRequest.getId());
+        film = filmMapper.updateFilm(updateFilmRequest, film);
         validate(film);
         Film updatedFilm = filmStorage.updateFilm(film);
         log.info("Фильм с id: {} обновлен", updatedFilm.getId());
-        return updatedFilm;
+        return filmMapper.toDto(updatedFilm);
     }
 
     public void addLikeToFilmByUser(Long filmId, Long userId) {
@@ -62,7 +69,7 @@ public class FilmService {
         filmStorage.getFilmById(filmId).getLikes().remove(userId);
     }
 
-    public Collection<Film> getFilmsByPopular(int count) {
+    public Collection<FilmDto> getFilmsByPopular(int count) {
         log.info("Запрос списка популярных фильмов в количестве count: {}", count);
         if (count <= 0) {
             throw new ValidationException("Значение count должно быть положительным числом");
@@ -70,6 +77,7 @@ public class FilmService {
         return filmStorage.getAllFilms().stream()
                 .sorted((f1, f2) -> Long.compare(f2.getLikes().size(), f1.getLikes().size()))
                 .limit(count)
+                .map(filmMapper::toDto)
                 .collect(Collectors.toList());
     }
 

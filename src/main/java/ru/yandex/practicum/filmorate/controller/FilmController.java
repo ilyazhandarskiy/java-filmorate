@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.dto.FilmDto;
+import ru.yandex.practicum.filmorate.dto.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -20,12 +22,12 @@ public class FilmController {
     private final FilmService filmService;
 
     @GetMapping
-    public Collection<Film> getAllFilms() {
+    public Collection<FilmDto> getAllFilms() {
         return filmService.getAllFilms();
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable @NotNull Long id) {
+    public FilmDto getFilmById(@PathVariable @NotNull Long id) {
         return filmService.getFilmById(id);
     }
 
@@ -50,18 +52,18 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
+    public Collection<FilmDto> getPopularFilms(@RequestParam(defaultValue = "10") int count) {
         return filmService.getFilmsByPopular(count);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Film createFilm(@RequestBody @Valid Film film) {
-        return filmService.createFilm(film);
+    public FilmDto createFilm(@RequestBody @Valid FilmDto filmDto) {
+        return filmService.createFilm(filmDto);
     }
 
     @PutMapping
-    public Film updateFilm(@RequestBody @Valid Film film) {
-        return filmService.updateFilm(film);
+    public FilmDto updateFilm(@RequestBody @Valid UpdateFilmRequest updateFilmRequest) {
+        return filmService.updateFilm(updateFilmRequest);
     }
 }
