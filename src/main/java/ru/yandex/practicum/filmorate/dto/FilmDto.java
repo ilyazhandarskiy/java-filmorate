@@ -28,7 +28,7 @@ public class FilmDto {
     @Min(value = 1, message = "Продолжительность фильма не может быть отрицательным")
     private int duration;
 
-    private final Set<Long> likes = new HashSet<>();
+    private int likesCount;
     private final Set<Genre> genres = new HashSet<>();
     private Mpa mpa;
 }

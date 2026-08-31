@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @AllArgsConstructor
 public class FriendshipService {
+    @Qualifier("jdbcFriendshipStorage")
     private final FriendshipStorage friendsStorage;
     private final UserStorage userStorage;
     private final UserMapper userMapper;
@@ -62,7 +64,7 @@ public class FriendshipService {
             return Collections.emptyList();
         }
         userStorage.getUserById(userId);
-        List<User> friendsList = friendsStorage.getFriendIds(userId);
+        List<User> friendsList = friendsStorage.getFriends(userId);
         log.info("User {} has {} friends", userId, friendsList.size());
         log.debug("Friends list: {}", friendsList);
         return friendsList.stream().map(userMapper::toDto).collect(Collectors.toList());

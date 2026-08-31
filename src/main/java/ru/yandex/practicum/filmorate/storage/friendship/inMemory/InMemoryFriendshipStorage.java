@@ -1,14 +1,17 @@
-package ru.yandex.practicum.filmorate.storage.friendship;
+package ru.yandex.practicum.filmorate.storage.friendship.inMemory;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.friendship.FriendshipStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.*;
 
 @Component
 @RequiredArgsConstructor
+@Qualifier("inMemoryFriendshipStorage")
 public class InMemoryFriendshipStorage implements FriendshipStorage {
     private final Map<Long, Set<Long>> friendsMap = new HashMap<>();
     private final UserStorage userStorage;
@@ -46,7 +49,7 @@ public class InMemoryFriendshipStorage implements FriendshipStorage {
     }
 
     @Override
-    public List<User> getFriendIds(Long userId) {
+    public List<User> getFriends(Long userId) {
         return friendsMap.getOrDefault(userId, new HashSet<>())
                 .stream()
                 .map(userStorage::getUserById)

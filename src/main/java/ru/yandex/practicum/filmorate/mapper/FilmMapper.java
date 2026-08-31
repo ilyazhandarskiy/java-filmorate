@@ -16,7 +16,7 @@ public class FilmMapper {
         dto.setReleaseDate(film.getReleaseDate());
         dto.setDuration(film.getDuration());
         dto.setMpa(film.getMpa());
-        dto.getLikes().addAll(film.getLikes());
+        dto.setLikesCount(film.getLikesCount());
         dto.getGenres().addAll(film.getGenres());
 
         return dto;
@@ -30,7 +30,7 @@ public class FilmMapper {
         film.setReleaseDate(dto.getReleaseDate());
         film.setDuration(dto.getDuration());
         film.setMpa(dto.getMpa());
-        film.getLikes().addAll(dto.getLikes());
+        film.setLikesCount(dto.getLikesCount());
         film.getGenres().addAll(dto.getGenres());
 
         return film;

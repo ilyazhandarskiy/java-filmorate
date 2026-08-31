@@ -8,11 +8,13 @@ import ru.yandex.practicum.filmorate.dto.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.filmLike.FilmLikeStorage;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,17 +26,23 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final UserService userService;
     private final FilmMapper filmMapper;
+    private final FilmLikeStorage filmLikeStorage;
 
     public Collection<FilmDto> getAllFilms() {
         log.info("Запрос списка всех фильмов");
-        return filmStorage.getAllFilms().stream().map(filmMapper::toDto).collect(Collectors.toList());
+        return filmStorage.getAllFilms().stream()
+                .map(this::setLikesCount)
+                .map(filmMapper::toDto).collect(Collectors.toList());
     }
 
     public FilmDto getFilmById(Long id) {
-        return filmMapper.toDto(filmStorage.getFilmById(id));
+        log.info("Запрос фильма с id: {}", id);
+        Film film = filmStorage.getFilmById(id);
+        return filmMapper.toDto(setLikesCount(film));
     }
 
     public void deleteFilm(Long id) {
+        log.info("Удаление фильма с id: {}", id);
         filmStorage.deleteFilm(id);
     }
 
@@ -44,7 +52,7 @@ public class FilmService {
         validate(film);
         Film newFilm = filmStorage.createFilm(film);
         log.info("Фильм с id: {} добавлен", newFilm.getId());
-        return filmMapper.toDto(newFilm);
+        return filmMapper.toDto(setLikesCount(newFilm));
     }
 
     public FilmDto updateFilm(UpdateFilmRequest updateFilmRequest) {
@@ -54,19 +62,21 @@ public class FilmService {
         validate(film);
         Film updatedFilm = filmStorage.updateFilm(film);
         log.info("Фильм с id: {} обновлен", updatedFilm.getId());
-        return filmMapper.toDto(updatedFilm);
+        return filmMapper.toDto(setLikesCount(updatedFilm));
     }
 
     public void addLikeToFilmByUser(Long filmId, Long userId) {
         log.info("Добавление лайка к фильму id: {} от пользователя id: {}", filmId, userId);
+        filmStorage.getFilmById(filmId);
         userService.getUserById(userId);
-        filmStorage.getFilmById(filmId).getLikes().add(userId);
+        filmLikeStorage.addLike(filmId, userId);
     }
 
     public void removeLikeFromFilmByUser(Long filmId, Long userId) {
         log.info("Удаление лайка из фильма id: {} от пользователя id: {}", filmId, userId);
+        filmStorage.getFilmById(filmId);
         userService.getUserById(userId);
-        filmStorage.getFilmById(filmId).getLikes().remove(userId);
+        filmLikeStorage.removeLike(filmId, userId);
     }
 
     public Collection<FilmDto> getFilmsByPopular(int count) {
@@ -75,7 +85,8 @@ public class FilmService {
             throw new ValidationException("Значение count должно быть положительным числом");
         }
         return filmStorage.getAllFilms().stream()
-                .sorted((f1, f2) -> Long.compare(f2.getLikes().size(), f1.getLikes().size()))
+                .map(this::setLikesCount)
+                .sorted(Comparator.comparingInt(Film::getLikesCount).reversed())
                 .limit(count)
                 .map(filmMapper::toDto)
                 .collect(Collectors.toList());
@@ -87,6 +98,11 @@ public class FilmService {
             throw new ValidationException("Дата релиза должна быть не раньше " +
                     MIN_RELEASE_DATE.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         }
+    }
+
+    private Film setLikesCount(Film film) {
+        film.setLikesCount(filmLikeStorage.getFilmLikesCount(film.getId()));
+        return film;
     }
 
 }

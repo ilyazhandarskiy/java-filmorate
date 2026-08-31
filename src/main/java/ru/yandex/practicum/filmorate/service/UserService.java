@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.UserDto;
 import ru.yandex.practicum.filmorate.mapper.UserMapper;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 
 public class UserService {
+    @Qualifier("jdbcUserStorage")
     private final UserStorage userStorage;
     private final UserMapper userMapper;
 
@@ -34,8 +36,8 @@ public class UserService {
         userStorage.deleteUser(userId);
     }
 
-    public UserDto createUser(UserDto UserDTO) {
-        User user = userMapper.toEntity(UserDTO);
+    public UserDto createUser(UserDto userDto) {
+        User user = userMapper.toEntity(userDto);
         log.info("Создание пользователя {}", user);
         autofillEmptyFields(user);
         User createdUser = userStorage.createUser(user);
