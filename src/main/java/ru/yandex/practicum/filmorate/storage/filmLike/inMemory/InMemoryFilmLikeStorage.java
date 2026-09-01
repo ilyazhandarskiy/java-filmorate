@@ -36,8 +36,4 @@ public class InMemoryFilmLikeStorage implements FilmLikeStorage {
         }
     }
 
-    @Override
-    public int getFilmLikesCount(Long filmId) {
-        return filmLikesByUsers.getOrDefault(filmId, Set.of()).size();
-    }
 }

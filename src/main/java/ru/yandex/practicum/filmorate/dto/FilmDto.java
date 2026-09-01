@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -29,6 +28,8 @@ public class FilmDto {
     private int duration;
 
     private int likesCount;
-    private final Set<Genre> genres = new HashSet<>();
+
+    @NotNull(message = "Рейтинг MPA обязателен")
     private Mpa mpa;
+    private Set<Genre> genres;
 }

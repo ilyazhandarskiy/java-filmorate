@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate.storage.friendship.jdbc;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.friendship.FriendshipStorage;
 import ru.yandex.practicum.filmorate.storage.user.jdbc.UserRowMapper;
@@ -14,14 +14,13 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-@Qualifier("jdbcFriendshipStorage")
-public class JdbcFriendshipStorage implements FriendshipStorage {
+public class FriendshipDbStorage implements FriendshipStorage {
     private final JdbcTemplate jdbcTemplate;
     private final UserRowMapper userRowMapper;
 
 
     @Override
-    public void addFriend(Long userId, Long friendId) {
+    public void addFriend(Long userId, Long friendId) throws NotFoundException {
         Integer exists = jdbcTemplate.query(
                 """
                         SELECT id
@@ -47,7 +46,7 @@ public class JdbcFriendshipStorage implements FriendshipStorage {
     }
 
     @Override
-    public void removeFriend(Long userId, Long friendId) {
+    public void removeFriend(Long userId, Long friendId) throws NotFoundException {
         jdbcTemplate.update(
                 """
                         DELETE FROM friendship

@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage.user.jdbc;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -20,8 +19,7 @@ import java.util.Objects;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-@Qualifier("jdbcUserStorage")
-public class JdbcUserStorage implements UserStorage {
+public class UserDbStorage implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
     private final UserRowMapper userRowMapper;
 
@@ -69,7 +67,7 @@ public class JdbcUserStorage implements UserStorage {
 
     @Override
     public void deleteUser(Long id) throws NotFoundException {
-        User user = getUserById(id);
+        getUserById(id);
         jdbcTemplate.update("DELETE FROM users WHERE id = ?", id);
         log.debug("User removed from DB with id {}", id);
     }

@@ -15,14 +15,13 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-
 public class UserService {
-    @Qualifier("jdbcUserStorage")
+    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
     private final UserMapper userMapper;
 
     public Collection<UserDto> getAllUsers() {
-        log.info("Запрос списка пользователей");
+        log.info("Request to retrieve the list of users");
         return userStorage.getAllUsers().stream()
                 .map(userMapper::toDto)
                 .collect(Collectors.toList());
@@ -38,27 +37,33 @@ public class UserService {
 
     public UserDto createUser(UserDto userDto) {
         User user = userMapper.toEntity(userDto);
-        log.info("Создание пользователя {}", user);
+        log.info("Creating user: {}", user);
         autofillEmptyFields(user);
+
         User createdUser = userStorage.createUser(user);
-        log.info("Пользователь создан с id:{}", createdUser.getId());
+        log.info("User created with id={}", createdUser.getId());
+
         return userMapper.toDto(createdUser);
     }
 
     public UserDto updateUser(UserDto userDto) {
-        log.info("Обновление пользователя: {}", userDto);
+        log.info("Updating user: {}", userDto);
+
         User user = userMapper.toEntity(userDto);
         autofillEmptyFields(user);
+
         User updatedUser = userStorage.updateUser(user);
-        log.info("Пользователь с id={} обновлён", updatedUser.getId());
+        log.info("User with id={} has been updated", updatedUser.getId());
+
         return userMapper.toDto(updatedUser);
     }
 
-
     private void autofillEmptyFields(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
-            log.info("Передано пустое имя для отображения, копируется значение логина {} в данное поле",
-                    user.getLogin());
+            log.info(
+                    "An empty name was provided; copying login '{}' into the name field",
+                    user.getLogin()
+            );
             user.setName(user.getLogin());
         }
     }

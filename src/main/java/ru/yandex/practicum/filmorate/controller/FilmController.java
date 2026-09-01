@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.dto.FilmDto;
-import ru.yandex.practicum.filmorate.dto.UpdateFilmRequest;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import java.util.Collection;
@@ -62,7 +61,7 @@ public class FilmController {
     }
 
     @PutMapping
-    public FilmDto updateFilm(@RequestBody @Valid UpdateFilmRequest updateFilmRequest) {
-        return filmService.updateFilm(updateFilmRequest);
+    public FilmDto updateFilm(@RequestBody @Valid FilmDto filmDto) {
+        return filmService.updateFilm(filmDto);
     }
 }

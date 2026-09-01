@@ -11,9 +11,9 @@ import java.util.*;
 
 @Component
 @RequiredArgsConstructor
-@Qualifier("inMemoryFriendshipStorage")
 public class InMemoryFriendshipStorage implements FriendshipStorage {
     private final Map<Long, Set<Long>> friendsMap = new HashMap<>();
+    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
 
     @Override
