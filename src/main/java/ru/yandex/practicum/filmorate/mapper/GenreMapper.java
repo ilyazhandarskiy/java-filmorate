@@ -17,4 +17,15 @@ public class GenreMapper {
             return genreDto;
         }
     }
+
+    public Genre toEntity(GenreDto genreDto) {
+        if (genreDto == null) {
+            return null;
+        } else {
+            Genre genre = new Genre();
+            genre.setId(genreDto.getId());
+            genre.setName(genreDto.getName());
+            return genre;
+        }
+    }
 }

@@ -57,6 +57,17 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
+    public Collection<Film> getFilmsByPopular(int count) {
+        List<Film> films = jdbcTemplate.query(
+                BASE_FILM_SELECT + " ORDER BY likes_count DESC, f.id LIMIT ?",
+                filmRowMapper,
+                count
+        );
+        fillGenres(films);
+        return films;
+    }
+
+    @Override
     public Film getFilmById(Long id) throws NotFoundException {
         List<Film> films = jdbcTemplate.query(
                 BASE_FILM_SELECT + " WHERE f.id = ?",

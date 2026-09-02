@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dto.FilmDto;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.mapper.FilmMapper;
+import ru.yandex.practicum.filmorate.mapper.GenreMapper;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
@@ -15,7 +17,6 @@ import ru.yandex.practicum.filmorate.storage.filmLike.FilmLikeStorage;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,7 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final UserService userService;
     private final FilmMapper filmMapper;
+    private final GenreMapper genreMapper;
 
     @Qualifier("filmLikeDbStorage")
     private final FilmLikeStorage filmLikeStorage;
@@ -107,9 +109,7 @@ public class FilmService {
             throw new ValidationException("The count value must be a positive number");
         }
 
-        return filmStorage.getAllFilms().stream()
-                .sorted(Comparator.comparingInt(Film::getLikesCount).reversed())
-                .limit(count)
+        return filmStorage.getFilmsByPopular(count).stream()
                 .map(filmMapper::toDto)
                 .collect(Collectors.toList());
     }
@@ -127,11 +127,23 @@ public class FilmService {
         mpaService.getById(film.getMpa().getId());
 
         if (film.getGenres() != null && !film.getGenres().isEmpty()) {
-            List<Long> genreIds = film.getGenres().stream()
+
+            List<Long> validGenreIds = genreService.getAll()
+                    .stream()
+                    .map(genreMapper::toEntity)
                     .map(Genre::getId)
                     .toList();
 
-            genreIds.forEach(genreService::getById);
+            List<Long> filmGenreIds = film.getGenres().stream()
+                    .map(Genre::getId)
+                    .toList();
+
+            filmGenreIds.stream()
+                    .filter(id -> !validGenreIds.contains(id))
+                    .findFirst()
+                    .ifPresent(id -> {
+                        throw new NotFoundException("Genre with id=" + id + " Not found");
+                    });
         }
     }
 }
