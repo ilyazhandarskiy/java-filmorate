@@ -1,13 +1,13 @@
-package ru.yandex.practicum.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.storage.film.inMemory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -17,6 +17,14 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public Collection<Film> getAllFilms() {
         return films.values();
+    }
+
+    @Override
+    public Collection<Film> getFilmsByPopular(int count) {
+        return films.values().stream()
+                .sorted(Comparator.comparingInt(Film::getLikesCount).reversed())
+                .limit(count)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -47,8 +55,8 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     private void checkIdExistence(Long id) {
         if (!films.containsKey(id)) {
-            log.warn("Фильм с id: {} не найден", id);
-            throw new NotFoundException("Фильм с переданным id: " + id + " не найден");
+            log.warn("Film with id: {} not found", id);
+            throw new NotFoundException("Film with id: " + id + " not found");
         }
     }
 

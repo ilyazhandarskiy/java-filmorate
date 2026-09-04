@@ -2,90 +2,68 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.dto.UserDto;
+import ru.yandex.practicum.filmorate.mapper.UserMapper;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
 import java.util.Collection;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-
 public class UserService {
+    @Qualifier("userDbStorage")
     private final UserStorage userStorage;
+    private final UserMapper userMapper;
 
-    public Collection<User> getAllUsers() {
-        log.info("Запрос списка пользователей");
-        return userStorage.getAllUsers();
+    public Collection<UserDto> getAllUsers() {
+        log.info("Request to retrieve the list of users");
+        return userStorage.getAllUsers().stream()
+                .map(userMapper::toDto)
+                .collect(Collectors.toList());
     }
 
-    public User getUserById(Long userId) {
-        return userStorage.getUserById(userId);
+    public UserDto getUserById(Long userId) {
+        return userMapper.toDto(userStorage.getUserById(userId));
     }
 
     public void deleteUserById(Long userId) {
         userStorage.deleteUser(userId);
     }
 
-    public User createUser(User user) {
-        log.info("Создание пользователя {}", user);
+    public UserDto createUser(UserDto userDto) {
+        User user = userMapper.toEntity(userDto);
+        log.info("Creating user: {}", user);
         autofillEmptyFields(user);
+
         User createdUser = userStorage.createUser(user);
-        log.info("Пользователь создан с id:{}", createdUser.getId());
-        return createdUser;
+        log.info("User created with id={}", createdUser.getId());
+
+        return userMapper.toDto(createdUser);
     }
 
-    public User updateUser(User user) {
-        log.info("Обновление пользователя: {}", user);
+    public UserDto updateUser(UserDto userDto) {
+        log.info("Updating user: {}", userDto);
+
+        User user = userMapper.toEntity(userDto);
         autofillEmptyFields(user);
+
         User updatedUser = userStorage.updateUser(user);
-        log.info("Пользователь с id={} обновлён", updatedUser.getId());
-        return user;
-    }
+        log.info("User with id={} has been updated", updatedUser.getId());
 
-    public void addToFriends(Long userId, Long friendId) {
-        if (userId.equals(friendId)) {
-            throw new ValidationException("Идентификаторы пользователей не должны совпадать");
-        }
-
-        User user = userStorage.getUserById(userId);
-        User friend = userStorage.getUserById(friendId);
-
-        user.getFriends().add(friendId);
-        friend.getFriends().add(userId);
-    }
-
-    public void deleteFromFriends(Long userId, Long friendId) {
-        if (userId.equals(friendId)) {
-            throw new ValidationException("Идентификаторы пользователей не должны совпадать");
-        }
-        userStorage.getUserById(userId).getFriends().remove(friendId);
-        userStorage.getUserById(friendId).getFriends().remove(userId);
-    }
-
-    public Collection<User> getFriendsByUserId(Long userId) {
-        return userStorage.getUserById(userId).getFriends().stream()
-                .map(userStorage::getUserById)
-                .collect(Collectors.toList());
-    }
-
-    public Collection<User> getCommonFriends(Long userId, Long friendId) {
-        Set<Long> currentUserFriends = userStorage.getUserById(userId).getFriends();
-        Set<Long> otherUserFriends = userStorage.getUserById(friendId).getFriends();
-        return currentUserFriends.stream()
-                .filter(otherUserFriends::contains)
-                .map(userStorage::getUserById)
-                .collect(Collectors.toList());
+        return userMapper.toDto(updatedUser);
     }
 
     private void autofillEmptyFields(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
-            log.info("Передано пустое имя для отображения, копируется значение логина {} в данное поле",
-                    user.getLogin());
+            log.info(
+                    "An empty name was provided; copying login '{}' into the name field",
+                    user.getLogin()
+            );
             user.setName(user.getLogin());
         }
     }

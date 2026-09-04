@@ -8,6 +8,8 @@ public interface FilmStorage {
     //определены методы добавления, удаления и модификации объектов.
     Collection<Film> getAllFilms();
 
+    Collection<Film> getFilmsByPopular(int count);
+
     Film getFilmById(Long id);
 
     Film createFilm(Film film);

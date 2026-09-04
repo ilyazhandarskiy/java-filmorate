@@ -12,8 +12,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.yandex.practicum.filmorate.dto.GenreDto;
+import ru.yandex.practicum.filmorate.dto.MpaDto;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,10 +31,9 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
-class FilmorateApplicationTests {
+class FilmorateRestApiTests {
     private static final String BASE = "http://localhost:8080";
     private static HttpClient client;
     private static Gson gson;
@@ -65,7 +70,15 @@ class FilmorateApplicationTests {
                 "  \"name\": \"Test\",\n" +
                 "  \"description\": \"" + "+".repeat(200) + "\",\n" +
                 "  \"releaseDate\": \"1895-12-28\",\n" +
-                "  \"duration\": 1\n" +
+                "  \"duration\": 1,\n" +
+                "  \"mpa\": {\n" +
+                "    \"id\": 1\n" +
+                "  },\n" +
+                "  \"genres\": [\n" +
+                "    {\n" +
+                "      \"id\": 2\n" +
+                "    }\n" +
+                "  ]\n" +
                 "}";
 
         HttpRequest filmRequest = HttpRequest.newBuilder()
@@ -121,7 +134,15 @@ class FilmorateApplicationTests {
                 "  \"name\": \"test\",\n" +
                 "  \"description\": \"adipisicing\",\n" +
                 "  \"releaseDate\": \"1967-03-25\",\n" +
-                "  \"duration\": 100\n" +
+                "  \"duration\": 100,\n" +
+                "  \"mpa\": {\n" +
+                "    \"id\": 1\n" +
+                "  },\n" +
+                "  \"genres\": [\n" +
+                "    {\n" +
+                "      \"id\": 2\n" +
+                "    }\n" +
+                "  ]\n" +
                 "}";
 
         HttpRequest req = HttpRequest.newBuilder()
@@ -143,7 +164,15 @@ class FilmorateApplicationTests {
                 "  \"name\": \"\",\n" +
                 "  \"description\": \"adipisicing\",\n" +
                 "  \"releaseDate\": \"1967-03-25\",\n" +
-                "  \"duration\": 100\n" +
+                "  \"duration\": 100,\n" +
+                "  \"mpa\": {\n" +
+                "    \"id\": 1\n" +
+                "  },\n" +
+                "  \"genres\": [\n" +
+                "    {\n" +
+                "      \"id\": 2\n" +
+                "    }\n" +
+                "  ]\n" +
                 "}";
 
         HttpRequest req = HttpRequest.newBuilder()
@@ -165,7 +194,15 @@ class FilmorateApplicationTests {
                 "  \"name\": \"Test\",\n" +
                 "  \"description\": \"" + "+".repeat(200) + "\",\n" +
                 "  \"releaseDate\": \"1895-12-28\",\n" +
-                "  \"duration\": 1\n" +
+                "  \"duration\": 1,\n" +
+                "  \"mpa\": {\n" +
+                "    \"id\": 1\n" +
+                "  },\n" +
+                "  \"genres\": [\n" +
+                "    {\n" +
+                "      \"id\": 2\n" +
+                "    }\n" +
+                "  ]\n" +
                 "}";
 
         HttpRequest req = HttpRequest.newBuilder()
@@ -187,7 +224,15 @@ class FilmorateApplicationTests {
                 "  \"name\": \"Test\",\n" +
                 "  \"description\": \"" + "+".repeat(201) + "\",\n" +
                 "  \"releaseDate\": \"1967-03-25\",\n" +
-                "  \"duration\": 100\n" +
+                "  \"duration\": 100,\n" +
+                "  \"mpa\": {\n" +
+                "    \"id\": 1\n" +
+                "  },\n" +
+                "  \"genres\": [\n" +
+                "    {\n" +
+                "      \"id\": 2\n" +
+                "    }\n" +
+                "  ]\n" +
                 "}";
 
         HttpRequest req = HttpRequest.newBuilder()
@@ -209,7 +254,15 @@ class FilmorateApplicationTests {
                 "  \"name\": \"Test\",\n" +
                 "  \"description\": \"Test\",\n" +
                 "  \"releaseDate\": \"1895-12-27\",\n" +
-                "  \"duration\": 100\n" +
+                "  \"duration\": 100,\n" +
+                "  \"mpa\": {\n" +
+                "    \"id\": 1\n" +
+                "  },\n" +
+                "  \"genres\": [\n" +
+                "    {\n" +
+                "      \"id\": 2\n" +
+                "    }\n" +
+                "  ]\n" +
                 "}";
 
         HttpRequest req = HttpRequest.newBuilder()
@@ -231,7 +284,15 @@ class FilmorateApplicationTests {
                 "  \"name\": \"Test\",\n" +
                 "  \"description\": \"Test\",\n" +
                 "  \"releaseDate\": \"1967-03-25\",\n" +
-                "  \"duration\": 0 \n" +
+                "  \"duration\": 0,\n" +
+                "  \"mpa\": {\n" +
+                "    \"id\": 1\n" +
+                "  },\n" +
+                "  \"genres\": [\n" +
+                "    {\n" +
+                "      \"id\": 2\n" +
+                "    }\n" +
+                "  ]\n" +
                 "}";
 
         HttpRequest req = HttpRequest.newBuilder()
@@ -282,7 +343,15 @@ class FilmorateApplicationTests {
                 "  \"name\": \"Film to delete\",\n" +
                 "  \"description\": \"desc\",\n" +
                 "  \"releaseDate\": \"2000-01-01\",\n" +
-                "  \"duration\": 100\n" +
+                "  \"duration\": 100,\n" +
+                "  \"mpa\": {\n" +
+                "    \"id\": 1\n" +
+                "  },\n" +
+                "  \"genres\": [\n" +
+                "    {\n" +
+                "      \"id\": 2\n" +
+                "    }\n" +
+                "  ]\n" +
                 "}";
 
         HttpRequest createReq = HttpRequest.newBuilder()
@@ -350,7 +419,15 @@ class FilmorateApplicationTests {
                 "  \"name\": \"Film for like\",\n" +
                 "  \"description\": \"desc\",\n" +
                 "  \"releaseDate\": \"2001-01-01\",\n" +
-                "  \"duration\": 120\n" +
+                "  \"duration\": 120,\n" +
+                "  \"mpa\": {\n" +
+                "    \"id\": 1\n" +
+                "  },\n" +
+                "  \"genres\": [\n" +
+                "    {\n" +
+                "      \"id\": 2\n" +
+                "    }\n" +
+                "  ]\n" +
                 "}";
 
         HttpRequest createFilmReq = HttpRequest.newBuilder()
@@ -416,7 +493,15 @@ class FilmorateApplicationTests {
                 "  \"name\": \"Film for unlike\",\n" +
                 "  \"description\": \"desc\",\n" +
                 "  \"releaseDate\": \"2001-01-01\",\n" +
-                "  \"duration\": 120\n" +
+                "  \"duration\": 120,\n" +
+                "  \"mpa\": {\n" +
+                "    \"id\": 1\n" +
+                "  },\n" +
+                "  \"genres\": [\n" +
+                "    {\n" +
+                "      \"id\": 2\n" +
+                "    }\n" +
+                "  ]\n" +
                 "}";
 
         HttpRequest createFilmReq = HttpRequest.newBuilder()
@@ -468,7 +553,15 @@ class FilmorateApplicationTests {
                     "  \"name\": \"Film " + i + "\",\n" +
                     "  \"description\": \"desc " + i + "\",\n" +
                     "  \"releaseDate\": \"2000-01-01\",\n" +
-                    "  \"duration\": " + (100 + i) + "\n" +
+                    "  \"duration\": " + (100 + i) + ",\n" +
+                    "  \"mpa\": {\n" +
+                    "    \"id\": 1\n" +
+                    "  },\n" +
+                    "  \"genres\": [\n" +
+                    "    {\n" +
+                    "      \"id\": 2\n" +
+                    "    }\n" +
+                    "  ]\n" +
                     "}";
 
             HttpRequest createReq = HttpRequest.newBuilder()
@@ -493,7 +586,8 @@ class FilmorateApplicationTests {
 
         assertEquals(200, resp.statusCode());
 
-        java.lang.reflect.Type type = new TypeToken<List<Film>>() {}.getType();
+        java.lang.reflect.Type type = new TypeToken<List<Film>>() {
+        }.getType();
         List<Film> films = gson.fromJson(resp.body(), type);
 
         assertEquals(10, films.size());
@@ -507,7 +601,15 @@ class FilmorateApplicationTests {
                     "  \"name\": \"Film " + i + "\",\n" +
                     "  \"description\": \"desc " + i + "\",\n" +
                     "  \"releaseDate\": \"2000-01-01\",\n" +
-                    "  \"duration\": " + (100 + i) + "\n" +
+                    "  \"duration\": " + (100 + i) + ",\n" +
+                    "  \"mpa\": {\n" +
+                    "    \"id\": 1\n" +
+                    "  },\n" +
+                    "  \"genres\": [\n" +
+                    "    {\n" +
+                    "      \"id\": 2\n" +
+                    "    }\n" +
+                    "  ]\n" +
                     "}";
 
             HttpRequest createReq = HttpRequest.newBuilder()
@@ -532,7 +634,8 @@ class FilmorateApplicationTests {
 
         assertEquals(200, resp.statusCode());
 
-        java.lang.reflect.Type type = new TypeToken<List<Film>>() {}.getType();
+        java.lang.reflect.Type type = new TypeToken<List<Film>>() {
+        }.getType();
         List<Film> films = gson.fromJson(resp.body(), type);
 
         assertEquals(1, films.size());
@@ -643,10 +746,9 @@ class FilmorateApplicationTests {
     @Test
     void createUserWithBoundaryCase_shouldReturnHTTP200() throws Exception {
         String json = "{\n" +
-
-                "  \"login\": \"dolore\",\n" +
+                "  \"login\": \"dolor1e\",\n" +
                 "  \"name\": \"\",\n" +
-                "  \"email\": \"test@test.ru\",\n" +
+                "  \"email\": \"test1@test.ru\",\n" +
                 "  \"birthday\": \"" + LocalDate.now() + "\"\n" +
                 "}";
         HttpRequest req = HttpRequest.newBuilder()
@@ -733,7 +835,8 @@ class FilmorateApplicationTests {
         assertEquals(201, createResp.statusCode());
 
         // Достаём id созданного пользователя из ответа
-        User created = gson.fromJson(createResp.body(), new TypeToken<User>() {}.getType());
+        User created = gson.fromJson(createResp.body(), new TypeToken<User>() {
+        }.getType());
         Long id = created.getId();
 
         // Запрашиваем пользователя по полученному id
@@ -786,7 +889,8 @@ class FilmorateApplicationTests {
         assertEquals(201, createResp.statusCode());
 
         // Берём id созданного пользователя
-        User created = gson.fromJson(createResp.body(), new TypeToken<User>() {}.getType());
+        User created = gson.fromJson(createResp.body(), new TypeToken<User>() {
+        }.getType());
         Long id = created.getId();
 
         // Удаляем пользователя по id
@@ -801,91 +905,112 @@ class FilmorateApplicationTests {
         assertEquals(204, deleteResp.statusCode());
     }
 
-    @DisplayName("PUT /users/{id}/friends/{friendId} - Добавление в друзья")
+    @DisplayName("PUT /users/{id}/friends/{friendId} - Добавляет друга только в список инициатора")
     @Test
-    void addToFriends_shouldReturnHTTP204() throws Exception {
-        // Создаём первого пользователя
+    void addToFriends_shouldAddFriendOnlyToInitiatorList() throws Exception {
+        // Создаём первого пользователя — инициатора дружбы
         String user1Json = "{\n" +
-                "  \"login\": \"user1\",\n" +
-                "  \"name\": \"User One\",\n" +
-                "  \"email\": \"user1@test.ru\",\n" +
+                "  \"login\": \"friend-owner\",\n" +
+                "  \"name\": \"Friend Owner\",\n" +
+                "  \"email\": \"friend-owner@test.ru\",\n" +
                 "  \"birthday\": \"1990-01-01\"\n" +
                 "}";
 
-        HttpRequest createUser1Req = HttpRequest.newBuilder()
+        HttpRequest createUser1Request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/users"))
                 .header("Content-Type", "application/json; charset=utf-8")
                 .POST(HttpRequest.BodyPublishers.ofString(user1Json, StandardCharsets.UTF_8))
                 .build();
 
-        HttpResponse<String> createUser1Resp =
-                client.send(createUser1Req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        HttpResponse<String> createUser1Response = client.send(
+                createUser1Request,
+                HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
+        );
 
-        assertEquals(201, createUser1Resp.statusCode());
+        assertEquals(201, createUser1Response.statusCode());
 
-        User user1 = gson.fromJson(createUser1Resp.body(), new TypeToken<User>() {}.getType());
+        User user1 = gson.fromJson(createUser1Response.body(), User.class);
         Long id1 = user1.getId();
 
-        // Создаём второго пользователя
+        // Создаём второго пользователя — того, кого добавляют в друзья
         String user2Json = "{\n" +
-                "  \"login\": \"user2\",\n" +
-                "  \"name\": \"User Two\",\n" +
-                "  \"email\": \"user2@test.ru\",\n" +
+                "  \"login\": \"friend-target\",\n" +
+                "  \"name\": \"Friend Target\",\n" +
+                "  \"email\": \"friend-target@test.ru\",\n" +
                 "  \"birthday\": \"1992-02-02\"\n" +
                 "}";
 
-        HttpRequest createUser2Req = HttpRequest.newBuilder()
+        HttpRequest createUser2Request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/users"))
                 .header("Content-Type", "application/json; charset=utf-8")
                 .POST(HttpRequest.BodyPublishers.ofString(user2Json, StandardCharsets.UTF_8))
                 .build();
 
-        HttpResponse<String> createUser2Resp =
-                client.send(createUser2Req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        HttpResponse<String> createUser2Response = client.send(
+                createUser2Request,
+                HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
+        );
 
-        assertEquals(201, createUser2Resp.statusCode());
+        assertEquals(201, createUser2Response.statusCode());
 
-        User user2 = gson.fromJson(createUser2Resp.body(), new TypeToken<User>() {}.getType());
+        User user2 = gson.fromJson(createUser2Response.body(), User.class);
         Long id2 = user2.getId();
 
-        // Добавляем второго пользователя в друзья к первому
-        HttpRequest addFriendReq = HttpRequest.newBuilder()
+        // id1 добавляет id2 в собственный список друзей
+        HttpRequest addFriendRequest = HttpRequest.newBuilder()
                 .uri(URI.create(BASE + "/users/" + id1 + "/friends/" + id2))
                 .PUT(HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        HttpResponse<String> addFriendResp =
-                client.send(addFriendReq, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        HttpResponse<String> addFriendResponse = client.send(
+                addFriendRequest,
+                HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
+        );
 
-        assertEquals(204, addFriendResp.statusCode());
+        assertEquals(204, addFriendResponse.statusCode());
 
-        // Получаем первого пользователя и проверяем, что он видит второго в списке друзей
-        HttpRequest getUser1Req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/users/" + id1))
+        // Проверяем список друзей первого пользователя
+        HttpRequest getUser1FriendsRequest = HttpRequest.newBuilder()
+                .uri(URI.create(BASE + "/users/" + id1 + "/friends"))
                 .GET()
                 .build();
 
-        HttpResponse<String> getUser1Resp =
-                client.send(getUser1Req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        HttpResponse<String> getUser1FriendsResponse = client.send(
+                getUser1FriendsRequest,
+                HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
+        );
 
-        assertEquals(200, getUser1Resp.statusCode());
+        assertEquals(200, getUser1FriendsResponse.statusCode());
 
-        User updatedUser1 = gson.fromJson(getUser1Resp.body(), new TypeToken<User>() {}.getType());
-        assertEquals(true, updatedUser1.getFriends().contains(id2));
+        List<User> user1Friends = gson.fromJson(
+                getUser1FriendsResponse.body(),
+                new TypeToken<List<User>>() {
+                }.getType()
+        );
 
-        // Получаем второго пользователя и проверяем, что он тоже видит первого в списке друзей
-        HttpRequest getUser2Req = HttpRequest.newBuilder()
-                .uri(URI.create(BASE + "/users/" + id2))
+        assertEquals(1, user1Friends.size());
+        assertEquals(id2, user1Friends.get(0).getId());
+
+        // Проверяем, что у второго пользователя первый автоматически не появился
+        HttpRequest getUser2FriendsRequest = HttpRequest.newBuilder()
+                .uri(URI.create(BASE + "/users/" + id2 + "/friends"))
                 .GET()
                 .build();
 
-        HttpResponse<String> getUser2Resp =
-                client.send(getUser2Req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        HttpResponse<String> getUser2FriendsResponse = client.send(
+                getUser2FriendsRequest,
+                HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
+        );
 
-        assertEquals(200, getUser2Resp.statusCode());
+        assertEquals(200, getUser2FriendsResponse.statusCode());
 
-        User updatedUser2 = gson.fromJson(getUser2Resp.body(), new TypeToken<User>() {}.getType());
-        assertEquals(true, updatedUser2.getFriends().contains(id1));
+        List<User> user2Friends = gson.fromJson(
+                getUser2FriendsResponse.body(),
+                new TypeToken<List<User>>() {
+                }.getType()
+        );
+
+        assertEquals(0, user2Friends.size());
     }
 
     @DisplayName("DELETE /users/{id}/friends/{friendId} - Удаление из друзей")
@@ -910,7 +1035,8 @@ class FilmorateApplicationTests {
 
         assertEquals(201, createUser1Resp.statusCode());
 
-        User user1 = gson.fromJson(createUser1Resp.body(), new TypeToken<User>() {}.getType());
+        User user1 = gson.fromJson(createUser1Resp.body(), new TypeToken<User>() {
+        }.getType());
         Long id1 = user1.getId();
 
         // Создаём второго пользователя
@@ -932,7 +1058,8 @@ class FilmorateApplicationTests {
 
         assertEquals(201, createUser2Resp.statusCode());
 
-        User user2 = gson.fromJson(createUser2Resp.body(), new TypeToken<User>() {}.getType());
+        User user2 = gson.fromJson(createUser2Resp.body(), new TypeToken<User>() {
+        }.getType());
         Long id2 = user2.getId();
 
         // Сначала добавляем дружбу между пользователями
@@ -980,7 +1107,8 @@ class FilmorateApplicationTests {
 
         assertEquals(201, createUser1Resp.statusCode());
 
-        User user1 = gson.fromJson(createUser1Resp.body(), new TypeToken<User>() {}.getType());
+        User user1 = gson.fromJson(createUser1Resp.body(), new TypeToken<User>() {
+        }.getType());
         Long id1 = user1.getId();
 
         // Создаём второго пользователя, который станет другом первого
@@ -1002,7 +1130,8 @@ class FilmorateApplicationTests {
 
         assertEquals(201, createUser2Resp.statusCode());
 
-        User user2 = gson.fromJson(createUser2Resp.body(), new TypeToken<User>() {}.getType());
+        User user2 = gson.fromJson(createUser2Resp.body(), new TypeToken<User>() {
+        }.getType());
         Long id2 = user2.getId();
 
         // Добавляем второго пользователя в друзья к первому
@@ -1050,7 +1179,8 @@ class FilmorateApplicationTests {
 
         assertEquals(201, createUser1Resp.statusCode());
 
-        User user1 = gson.fromJson(createUser1Resp.body(), new TypeToken<User>() {}.getType());
+        User user1 = gson.fromJson(createUser1Resp.body(), new TypeToken<User>() {
+        }.getType());
         Long id1 = user1.getId();
 
         // Создаём второго пользователя
@@ -1072,7 +1202,8 @@ class FilmorateApplicationTests {
 
         assertEquals(201, createUser2Resp.statusCode());
 
-        User user2 = gson.fromJson(createUser2Resp.body(), new TypeToken<User>() {}.getType());
+        User user2 = gson.fromJson(createUser2Resp.body(), new TypeToken<User>() {
+        }.getType());
         Long id2 = user2.getId();
 
         // Создаём общего друга
@@ -1094,7 +1225,8 @@ class FilmorateApplicationTests {
 
         assertEquals(201, createFriendResp.statusCode());
 
-        User friend = gson.fromJson(createFriendResp.body(), new TypeToken<User>() {}.getType());
+        User friend = gson.fromJson(createFriendResp.body(), new TypeToken<User>() {
+        }.getType());
         Long friendId = friend.getId();
 
         // Добавляем общего друга к первому пользователю
@@ -1129,5 +1261,149 @@ class FilmorateApplicationTests {
                 client.send(getCommonReq, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
 
         assertEquals(200, getCommonResp.statusCode());
+    }
+
+    // --- GenreController ---
+
+    @DisplayName("GET /genres - Получение всех жанров")
+    @Test
+    void getAllGenres_shouldReturnHttp200AndGenres() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE + "/genres"))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(
+                request,
+                HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
+        );
+
+        assertEquals(200, response.statusCode());
+
+        List<GenreDto> genres = gson.fromJson(
+                response.body(),
+                new TypeToken<List<GenreDto>>() {
+                }.getType()
+        );
+
+        assertNotNull(genres);
+        assertFalse(genres.isEmpty());
+
+        GenreDto firstGenre = genres.get(0);
+        assertNotNull(firstGenre.getId());
+        assertNotNull(firstGenre.getName());
+
+        assertEquals(1L, firstGenre.getId());
+        assertEquals("Комедия", firstGenre.getName());
+    }
+
+    @DisplayName("GET /genres/{id} - Получение жанра по существующему id")
+    @Test
+    void getGenreByExistingId_shouldReturnHttp200AndGenre() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE + "/genres/1"))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(
+                request,
+                HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
+        );
+
+        assertEquals(200, response.statusCode());
+
+        GenreDto genre = gson.fromJson(response.body(), GenreDto.class);
+
+        assertNotNull(genre);
+        assertEquals(1L, genre.getId());
+        assertEquals("Комедия", genre.getName());
+    }
+
+    @DisplayName("GET /genres/{id} - Возвращает 404 для несуществующего жанра")
+    @Test
+    void getGenreByUnknownId_shouldReturnHttp404() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE + "/genres/999999"))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(
+                request,
+                HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
+        );
+
+        assertEquals(404, response.statusCode());
+    }
+
+    // --- MpaController ---
+
+    @DisplayName("GET /mpa - Получение всех MPA-рейтингов")
+    @Test
+    void getAllMpa_shouldReturnHttp200AndMpaRatings() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE + "/mpa"))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(
+                request,
+                HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
+        );
+
+        assertEquals(200, response.statusCode());
+
+        List<MpaDto> mpaRatings = gson.fromJson(
+                response.body(),
+                new TypeToken<List<MpaDto>>() {
+                }.getType()
+        );
+
+        assertNotNull(mpaRatings);
+        assertFalse(mpaRatings.isEmpty());
+
+        MpaDto firstMpa = mpaRatings.get(0);
+        assertNotNull(firstMpa.getId());
+        assertNotNull(firstMpa.getName());
+
+        assertEquals(1L, firstMpa.getId());
+        assertEquals("G", firstMpa.getName());
+    }
+
+    @DisplayName("GET /mpa/{id} - Получение MPA-рейтинга по существующему id")
+    @Test
+    void getMpaByExistingId_shouldReturnHttp200AndMpaRating() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE + "/mpa/1"))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(
+                request,
+                HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
+        );
+
+        assertEquals(200, response.statusCode());
+
+        MpaDto mpa = gson.fromJson(response.body(), MpaDto.class);
+
+        assertNotNull(mpa);
+        assertEquals(1L, mpa.getId());
+        assertEquals("G", mpa.getName());
+    }
+
+    @DisplayName("GET /mpa/{id} - Возвращает 404 для несуществующего MPA-рейтинга")
+    @Test
+    void getMpaByUnknownId_shouldReturnHttp404() throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE + "/mpa/999999"))
+                .GET()
+                .build();
+
+        HttpResponse<String> response = client.send(
+                request,
+                HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8)
+        );
+
+        assertEquals(404, response.statusCode());
     }
 }
